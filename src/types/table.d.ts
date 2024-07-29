@@ -8,9 +8,12 @@ export interface TableData {
 export interface Column {
   title: string;
   key: string;
-  component?: 'link' | 'label';
+  component?: 'link' | 'label' | 'set' | 'image';
   format?: Formatters;
-  componentOptions?: ComponentLabelOptions & ComponentLinkOptions;
+  componentOptions?: ComponentLabelOptions &
+    ComponentLinkOptions &
+    ComponentImageOptions;
+  sortable?: boolean;
   sortField?: string;
 }
 
@@ -46,6 +49,11 @@ export interface ComponentLabelOptions {
 
 export interface ComponentLinkOptions {
   href?: string;
+}
+
+export interface ComponentImageOptions {
+  src?: string;
+  alt?: string;
 }
 
 export interface Action {

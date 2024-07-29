@@ -10,6 +10,8 @@ import {
 import { deepClone } from '@/utils';
 import EmptyState from '../EmptyState';
 import { formatters } from './utils/formatters';
+import SetEntity from './_components/SetEntity';
+import Image from 'next/image';
 
 export default function Table({ tableData }: { tableData: TableData }) {
   const MAX_PAGES_TO_SHOW = 4;
@@ -118,6 +120,19 @@ export default function Table({ tableData }: { tableData: TableData }) {
                     <span className='flex items-center gap-3'>
                       {col.title}
                       {/* TODO: sort column */}
+                      {col?.sortable && (
+                        <button
+                          className='btn-icon btn-small'
+                          onClick={() => {
+                            setSortBy({
+                              col: col?.sortField || col.key,
+                              asc: !sortBy.asc,
+                            });
+                          }}
+                        >
+                          <i className='fa-solid fa-sort'></i>
+                        </button>
+                      )}
                     </span>
                   </th>
                 ))}
@@ -146,6 +161,17 @@ export default function Table({ tableData }: { tableData: TableData }) {
                                 : String(row[col.key])}
                             </a>
                           );
+                        } else if (col.component === 'set') {
+                          <SetEntity row={row} column={col} />;
+                        } else if (col.component === 'image') {
+                          <Image
+                            src={
+                              col.componentOptions?.src || String(row[col.key])
+                            }
+                            width={64}
+                            height={64}
+                            alt={col.componentOptions?.alt || ''}
+                          />;
                         } else {
                           return col?.format
                             ? formatters[col.format](String(row[col.key]))
