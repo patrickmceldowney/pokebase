@@ -1,3 +1,5 @@
+'use client';
+
 import { Row, TableData } from '@/types/table';
 import { useEffect, useState } from 'react';
 import {
@@ -9,7 +11,7 @@ import { deepClone } from '@/utils';
 import EmptyState from '../EmptyState';
 import { formatters } from './utils/formatters';
 
-export default function Table(props: TableData) {
+export default function Table({ tableData }: { tableData: TableData }) {
   const MAX_PAGES_TO_SHOW = 4;
   const PAGINATION_OPTIONS = [10, 25, 50, 100, 0]; // 0 is ALL
 
@@ -23,7 +25,7 @@ export default function Table(props: TableData) {
   const [paginatedRows, setPaginatedRows] = useState<Row[]>([]);
   const [selectedRows, setSelectedRows] = useState<Row[]>([]);
   const [filteredTableRows, setFilteredTableRows] = useState<Row[]>(() =>
-    deepClone(props.rows)
+    deepClone(tableData.rows)
   );
   const [bulkSelect, setBulkSelect] = useState(false);
   const [paginationStart, setPaginationStart] = useState(1);
@@ -35,15 +37,15 @@ export default function Table(props: TableData) {
     const filteredRows = filterBySearch(
       searchValue,
       filteredTableRows,
-      props.options
+      tableData.options
     );
     const sortedRows = sortRows(filteredRows, sortBy);
     setRowResults(sortedRows);
-  }, [searchValue, filteredTableRows, sortBy, props.options]);
+  }, [searchValue, filteredTableRows, sortBy, tableData.options]);
 
   // get paginated results
   useEffect(() => {
-    if (!props?.options?.pagination || !rowsPerPage) {
+    if (!tableData?.options?.pagination || !rowsPerPage) {
       setPaginatedRows(rowResults);
     } else {
       const cloned = deepClone(rowResults);
@@ -54,7 +56,7 @@ export default function Table(props: TableData) {
       );
       setPaginatedRows(cloned.slice(startIdx, endIdx));
     }
-  }, [rowResults, currentPage, rowsPerPage, props?.options?.pagination]);
+  }, [rowResults, currentPage, rowsPerPage, tableData?.options?.pagination]);
 
   // set total pages
   useEffect(() => {
@@ -90,14 +92,14 @@ export default function Table(props: TableData) {
   return (
     <div
       className={`flex flex-col tw-gap-10 ${
-        props?.options?.pagination ? 'pt-12 pb-32' : 'py-12'
+        tableData?.options?.pagination ? 'pt-12 pb-32' : 'py-12'
       }`}
     >
       {/* handle filters */}
-      {props?.filters?.length ||
-        (props?.options?.search && (
+      {tableData?.filters?.length ||
+        (tableData?.options?.search && (
           <div className='flex justify-between'>
-            {props?.options?.search && <p>Search</p>}
+            {tableData?.options?.search && <p>Search</p>}
             {/* TODO: filters */}
           </div>
         ))}
@@ -107,7 +109,7 @@ export default function Table(props: TableData) {
             <thead className='text-sm text-gray-500 bg-white'>
               <tr>
                 {/* TODO: bulk select */}
-                {props.columns.map((col) => (
+                {tableData.columns.map((col) => (
                   <th
                     scope='col'
                     className='p-3 text-sm font-normal'
@@ -130,11 +132,26 @@ export default function Table(props: TableData) {
                   }`}
                 >
                   {/* TODO: bulk select */}
-                  {props.columns.map((col) => (
-                    <td key={col.key}>
-                      {col?.format
-                        ? formatters[col.format](String(row[col.key]))
-                        : row[col.key]}
+                  {tableData.columns.map((col) => (
+                    <td className='px-6 py-4' key={col.key}>
+                      {(() => {
+                        if (col.component === 'link') {
+                          return (
+                            <a
+                              className='cursor-pointer hover:text-purple-600'
+                              href={col?.componentOptions?.href}
+                            >
+                              {col.format
+                                ? formatters[col.format](String(row[col.key]))
+                                : String(row[col.key])}
+                            </a>
+                          );
+                        } else {
+                          return col?.format
+                            ? formatters[col.format](String(row[col.key]))
+                            : String(row[col.key]);
+                        }
+                      })()}
                     </td>
                   ))}
                   {/* TODO: row actions */}

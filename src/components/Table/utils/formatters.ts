@@ -2,7 +2,7 @@ import { Formatters } from '@/types/table';
 
 export const formatters: Record<
   Formatters,
-  (value: string) => string | number | Date
+  (value: string) => string | number
 > = {
   date: (value) => {
     const date = new Date(value);

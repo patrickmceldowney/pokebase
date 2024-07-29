@@ -45,7 +45,7 @@ export interface ComponentLabelOptions {
 }
 
 export interface ComponentLinkOptions {
-  onClick?: (row?: Row) => void;
+  href?: string;
 }
 
 export interface Action {

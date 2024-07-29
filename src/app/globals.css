@@ -31,3 +31,29 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer components {
+  button {
+    @apply disabled:opacity-60 disabled:pointer-events-none transition-colors duration-200 cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply border bg-purple-700 text-white focus:bg-purple-900 hover:bg-purple-900  inline-flex items-center justify-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply border bg-gray-400 border-gray-400 text-slate-900 focus:bg-gray-200 hover:bg-gray-200 inline-flex items-center justify-center gap-2;
+  }
+
+  .btn-large {
+    @apply px-7 py-3 leading-[21px] rounded-3xl text-base font-medium;
+  }
+
+  .btn-medium {
+    @apply py-2 px-5 rounded-[21px] text-sm leading-5 font-medium;
+  }
+
+  .btn-small {
+    @apply py-1.5 px-4 text-sm roudned-2xl leading-5 font-medium;
+  }
+}
