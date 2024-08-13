@@ -54,6 +54,28 @@ export interface ComponentLinkOptions {
 export interface ComponentImageOptions {
   src?: string;
   alt?: string;
+  size?: {
+    width: number;
+    height: number;
+  };
+}
+
+export interface PokemonSet {
+  id?: string;
+  name?: string;
+  series?: string;
+  printedTotal?: number;
+  total?: number;
+  legalities?: {
+    unlimited?: string;
+  };
+  ptcgoCode?: 'TM';
+  releaseData?: string;
+  updatesAt?: string;
+  images?: {
+    symbol?: string;
+    logo?: string;
+  };
 }
 
 export interface Action {

@@ -2,7 +2,9 @@ import Table from '@/components/Table/Table';
 import { TableData } from '@/types/table';
 
 async function getData() {
-  const res = await fetch(`${process.env.APP_URL}/api/pokemon/cards?limit=1`);
+  const res = await fetch(`${process.env.APP_URL}/api/pokemon/cards?limit=10`, {
+    cache: 'no-store',
+  });
   if (!res.ok) {
     throw new Error('Failed to fetch data');
   }
@@ -12,7 +14,6 @@ async function getData() {
 
 export default async function Home() {
   const data = await getData();
-  console.log(data.data);
 
   let tableData: TableData = {
     columns: [
@@ -27,6 +28,18 @@ export default async function Home() {
         title: 'Name',
         key: 'name',
         sortable: true,
+      },
+      // TODO: create pokemon entity
+      {
+        title: 'Pokemon',
+        key: 'images.small',
+        component: 'image',
+        componentOptions: {
+          size: {
+            height: 100,
+            width: 100,
+          },
+        },
       },
       {
         title: 'Type',

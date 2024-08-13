@@ -1,13 +1,13 @@
 'use client';
 
-import { Row, TableData } from '@/types/table';
+import { Column, Row, TableData } from '@/types/table';
 import { useEffect, useState } from 'react';
 import {
   filterBySearch,
   generatePageNumbers,
   sortRows,
 } from './utils/tableFns';
-import { deepClone } from '@/utils';
+import { deepClone, getNestedField } from '@/utils';
 import EmptyState from '../EmptyState';
 import { formatters } from './utils/formatters';
 import SetEntity from './_components/SetEntity';
@@ -91,6 +91,10 @@ export default function Table({ tableData }: { tableData: TableData }) {
     );
   }, [currentPage, totalPages]);
 
+  function getSortFieldKey(column: Column) {
+    return column.sortField ?? column.key;
+  }
+
   return (
     <div
       className={`flex flex-col tw-gap-10 ${
@@ -108,9 +112,19 @@ export default function Table({ tableData }: { tableData: TableData }) {
       {rowResults.length > 0 ? (
         <div className='overflow-x-auto max-h-screen'>
           <table className='table-auto w-full text-base text-left text-gray-950'>
-            <thead className='text-sm text-gray-500 bg-white'>
+            <thead className='text-sm text-neutral-grey bg-white'>
               <tr>
-                {/* TODO: bulk select */}
+                {/* TODO: handle bulk select on change */}
+                {tableData?.options?.bulkSelect && (
+                  <th className='checkbox-wrapper px-6 py-4'>
+                    <input
+                      type='checkbox'
+                      className='checkbox'
+                      checked={bulkSelect}
+                    />
+                  </th>
+                )}
+
                 {tableData.columns.map((col) => (
                   <th
                     scope='col'
@@ -119,15 +133,21 @@ export default function Table({ tableData }: { tableData: TableData }) {
                   >
                     <span className='flex items-center gap-3'>
                       {col.title}
-                      {/* TODO: sort column */}
                       {col?.sortable && (
                         <button
-                          className='btn-icon btn-small'
+                          className='w-4 h-4 cursor-pointer outline-none border-none text-neutral-grey text-[13px] flex items-center-justify-center'
                           onClick={() => {
-                            setSortBy({
-                              col: col?.sortField || col.key,
-                              asc: !sortBy.asc,
-                            });
+                            const colKey = getSortFieldKey(col);
+                            if (sortBy.col === colKey) {
+                              setSortBy((prev) => {
+                                return { ...prev, asc: !prev.asc };
+                              });
+                            } else {
+                              setSortBy({
+                                col: colKey,
+                                asc: true,
+                              });
+                            }
                           }}
                         >
                           <i className='fa-solid fa-sort'></i>
@@ -146,7 +166,20 @@ export default function Table({ tableData }: { tableData: TableData }) {
                     i % 2 !== 0 ? 'bg-white' : 'bg-[#f7f7f8b2]'
                   }`}
                 >
-                  {/* TODO: bulk select */}
+                  {/* TODO: handle bulk select (bind group) */}
+                  {tableData?.options?.bulkSelect && (
+                    <td className='checkbox-wrapper px-6 py-4'>
+                      <input
+                        type='checkbox'
+                        className='checkbox'
+                        name='selectRow'
+                        id='selectRow'
+                        value={String(
+                          row[tableData.options.bulkSelectKey || '_id']
+                        )}
+                      />
+                    </td>
+                  )}
                   {tableData.columns.map((col) => (
                     <td className='px-6 py-4' key={col.key}>
                       {(() => {
@@ -157,25 +190,36 @@ export default function Table({ tableData }: { tableData: TableData }) {
                               href={col?.componentOptions?.href}
                             >
                               {col.format
-                                ? formatters[col.format](String(row[col.key]))
-                                : String(row[col.key])}
+                                ? formatters[col.format](
+                                    String(getNestedField(row, col.key))
+                                  )
+                                : String(getNestedField(row, col.key))}
                             </a>
                           );
                         } else if (col.component === 'set') {
-                          <SetEntity row={row} column={col} />;
-                        } else if (col.component === 'image') {
-                          <Image
-                            src={
-                              col.componentOptions?.src || String(row[col.key])
-                            }
-                            width={64}
-                            height={64}
-                            alt={col.componentOptions?.alt || ''}
-                          />;
+                          return <SetEntity row={row} column={col} />;
+                        } else if (
+                          col.component === 'image' &&
+                          String(getNestedField(row, col.key))
+                        ) {
+                          return (
+                            <Image
+                              src={
+                                col.componentOptions?.src ||
+                                String(getNestedField(row, col.key)) ||
+                                ''
+                              }
+                              width={col.componentOptions?.size?.width || 64}
+                              height={col.componentOptions?.size?.height || 64}
+                              alt={col.componentOptions?.alt || ''}
+                            />
+                          );
                         } else {
                           return col?.format
-                            ? formatters[col.format](String(row[col.key]))
-                            : String(row[col.key]);
+                            ? formatters[col.format](
+                                String(getNestedField(row, col.key))
+                              )
+                            : String(getNestedField(row, col.key));
                         }
                       })()}
                     </td>

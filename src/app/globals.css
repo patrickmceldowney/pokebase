@@ -37,27 +37,163 @@ body {
     @apply disabled:opacity-60 disabled:pointer-events-none transition-colors duration-200 cursor-pointer;
   }
 
+  /* Main classes */
   .btn-primary {
-    @apply border bg-purple-700 text-white focus:bg-purple-900 hover:bg-purple-900  inline-flex items-center justify-center gap-2;
+    @apply border bg-primary border-primary text-white focus:bg-primary-medium hover:bg-primary-medium  inline-flex items-center justify-center gap-2;
   }
-
   .btn-secondary {
-    @apply border bg-gray-400 border-gray-400 text-slate-900 focus:bg-gray-200 hover:bg-gray-200 inline-flex items-center justify-center gap-2;
+    @apply border bg-neutral-white-smoke border-neutral-white-smoke text-neutral-dark focus:bg-neutral-whisper hover:bg-neutral-whisper inline-flex items-center justify-center gap-2;
+  }
+  .btn-tertiary {
+    @apply border bg-white border-neutral-whisper text-neutral-matterhorn focus:bg-neutral-whisper hover:bg-neutral-whisper focus:text-neutral-dark hover:text-neutral-dark;
+  }
+  .btn-negative {
+    @apply border bg-accent-danger border-accent-danger text-white focus:bg-accent-danger-medium hover:bg-accent-danger-medium inline-flex items-center justify-center gap-2;
   }
 
+  /* Text button styles */
+  .btn-text-primary {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-primary hover:text-primary-medium focus:text-primary-medium;
+  }
+  .btn-text-secondary {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-accent-info hover:text-accent-info-medium focus:text-accent-info-medium;
+  }
+  .btn-text-negative {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-accent-danger hover:text-accent-danger-medium focus:text-accent-danger-medium;
+  }
+  .btn-text-dark {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-neutral-matterhorn hover:text-neutral-dark focus:text-neutral-dark;
+  }
+  .btn-text-light {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-neutral-azure hover:text-white focus:text-white;
+  }
+  .btn-text-tooltip {
+    @apply gap-1.5 font-medium inline-flex items-center justify-center text-neutral-matterhorn hover:text-neutral-dark active:text-neutral-dark border-b border-dashed border-inherit;
+  }
+
+  /* Text button sizes */
+  .btn-text-large {
+    @apply text-[17px];
+  }
+  .btn-text-medium {
+    @apply text-base;
+  }
+  .btn-text-small {
+    @apply text-sm;
+  }
+  .btn-text-large i {
+    @apply text-[17px];
+  }
+  .btn-text-medium i {
+    @apply text-[17px];
+  }
+  .btn-text-small i {
+    @apply text-[13px];
+  }
+
+  /* Icons */
   .btn-icon {
-    @apply bg-none outline-none;
+    @apply bg-none outline-none flex items-center p-2 gap-2.5 rounded-sm border border-neutral-white-smoke bg-neutral-white-smoke text-[13px] text-neutral-dark transition-colors duration-200 hover:bg-primary-light hover:border-primary-light hover:text-primary;
+  }
+  .btn-icon i {
+    @apply flex items-center justify-center w-4 h-4 transition-all duration-200;
+  }
+  .btn-icon-simple {
+    @apply text-xl w-5 h-4 p-2 gap-2.5 inline-flex items-center justify-center text-neutral-grey hover:text-neutral-dark focus:text-neutral-dark;
   }
 
+  /* Sizes */
   .btn-large {
     @apply px-7 py-3 leading-[21px] rounded-3xl text-base font-medium;
   }
-
   .btn-medium {
     @apply py-2 px-5 rounded-[21px] text-sm leading-5 font-medium;
   }
-
   .btn-small {
     @apply py-1.5 px-4 text-sm rounded-2xl leading-5 font-medium;
+  }
+
+  /* Groups */
+  .btn-group {
+    @apply flex gap-6 items-center;
+  }
+
+  /* TODO: Form inputs */
+  .input-wrapper {
+    @apply flex flex-col gap-1 self-stretch;
+  }
+  .input-label {
+    @apply text-neutral-matterhorn leading-[21px];
+  }
+
+  .primary-input {
+    @apply p-3 text-neutral-dark bg-white w-full border-neutral-whisper border rounded-sm focus:bg-neutral-azure tw-outline-none disabled:text-neutral-fortress-grey;
+  }
+  .primary-textarea {
+    @apply p-4 rounded resize-none border border-neutral-whisper bg-white outline-none;
+  }
+  .pin-input {
+    @apply h-[46px] w-[40px] py-3 px-2 rounded-sm border border-neutral-whisper bg0white flex items-center focus:bg-neutral-azure outline-none text-neutral-dark text-base leading-5 text-center;
+  }
+
+  input.error,
+  textarea.error {
+    @apply border-accent-danger;
+  }
+
+  .checkbox-wrapper {
+    @apply flex items-center;
+  }
+  .checkbox {
+    @apply w-4 h-4 text-primary bg-white border-neutral-fortress-grey rounded cursor-pointer disabled:pointer-events-none;
+  }
+
+  /* Tabs */
+  .tab-label {
+    @apply inline-flex py-1.5 px-3 justify0center items-center gap-2 rounded-2xl text-baase cursor-pointer text-neutral-matterhorn hover:text-primary;
+  }
+  .tab-label.active {
+    @apply text-primary font-medium;
+  }
+
+  /* Tag */
+  .tag {
+    @apply py-0.5 flex items-center justify-center w-fit px-2 gap-1.5 rounded font-medium text-sm leading-5;
+  }
+  .tag-ghost {
+    @apply py-0.5 flex items-center justify-center gap-1.5 roudned text-neutral-grey text-base;
+  }
+
+  /* Dropdown */
+  .btn-dropdown {
+    @apply py-2 text-base whitespace-nowrap text-left pr-6 pl-4 flex items-center gap-2.5 bg-white hover:bg-neutral-azure rounded-sm transition-all duration-200;
+  }
+  .btn-dropdown i {
+    @apply !text-neutral-grey;
+  }
+
+  /* Datepicker */
+  .date-selector {
+    @apply flex flex-col w-8 h-8 p-1.5 justify-center items-center gap-[1px] rounded-md text-sm text-center text-neutral-dark hover:bg-neutral-whisper disabled:text-neutral-whisper disabled:pointer-events-none transition-all duration-200;
+  }
+  .date-selector.start {
+    @apply !text-primary !pb-[1px];
+  }
+  .date-selector.start i {
+    @apply text-[4px];
+  }
+  .date-selector.active {
+    @apply !bg-primary-light !text-primary;
+  }
+  .date-selector.today {
+    @apply !bg-neutral-white-smoke;
+  }
+
+  /* Dividers */
+  .verical-divider {
+    @apply w-[1px] h-full bg-neutral-whisper;
+  }
+  .horizontal-divider {
+    @apply h-[1px] w-full bg-neutral-whisper;
   }
 }
