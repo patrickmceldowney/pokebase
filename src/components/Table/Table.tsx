@@ -97,21 +97,20 @@ export default function Table({ tableData }: { tableData: TableData }) {
 
   return (
     <div
-      className={`flex flex-col tw-gap-10 ${
-        tableData?.options?.pagination ? 'pt-12 pb-32' : 'py-12'
-      }`}
+      className='flex-grow overflow-y-auto'
+      style={{ maxHeight: 'calc(100vh - 40px)' }}
     >
       {/* handle filters */}
       {tableData?.filters?.length ||
         (tableData?.options?.search && (
-          <div className='flex justify-between'>
+          <div className='flex justify-between sticky top-0 bg-slate-800 z-10'>
             {tableData?.options?.search && <p>Search</p>}
             {/* TODO: filters */}
           </div>
         ))}
       {rowResults.length > 0 ? (
-        <div className='overflow-x-auto max-h-screen'>
-          <table className='table-auto w-full text-base text-left text-gray-950'>
+        <div className='overflow-y-auto'>
+          <table className='table-auto w-full text-base text-left text-gray-950 border-collapse'>
             <thead className='text-sm text-neutral-grey bg-white'>
               <tr>
                 {/* TODO: handle bulk select on change */}

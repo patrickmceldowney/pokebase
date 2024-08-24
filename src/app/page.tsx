@@ -80,7 +80,7 @@ export default async function Home() {
     rows: data.data || [],
   };
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
+    <main className=' max-h-screen p-24 overflow-hidden flex flex-col'>
       <Table tableData={tableData} />
     </main>
   );
