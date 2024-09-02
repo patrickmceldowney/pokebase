@@ -22,7 +22,7 @@ export interface Row {
 }
 
 export interface TableFilter {
-  type: 'date';
+  type: 'date' | 'dropdown';
   filterKey: string;
   defaultValue?: string | number | boolean | object;
 }

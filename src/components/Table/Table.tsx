@@ -101,13 +101,15 @@ export default function Table({ tableData }: { tableData: TableData }) {
       style={{ maxHeight: 'calc(100vh - 40px)' }}
     >
       {/* handle filters */}
-      {tableData?.filters?.length ||
-        (tableData?.options?.search && (
-          <div className='flex justify-between sticky top-0 bg-slate-800 z-10'>
-            {tableData?.options?.search && <p>Search</p>}
-            {/* TODO: filters */}
-          </div>
-        ))}
+      {(tableData?.filters?.length || tableData?.options?.search) && (
+        <div className='flex justify-between sticky top-0 bg-neutral-whisper z-10 rounded-t'>
+          {tableData?.options?.search && <p>Search</p>}
+          {/* TODO: filters */}
+          {(() => {
+            return 'filters';
+          })()}
+        </div>
+      )}
       {rowResults.length > 0 ? (
         <div className='overflow-y-auto'>
           <table className='table-auto w-full text-base text-left text-gray-950 border-collapse'>
@@ -127,7 +129,7 @@ export default function Table({ tableData }: { tableData: TableData }) {
                 {tableData.columns.map((col) => (
                   <th
                     scope='col'
-                    className='p-3 text-sm font-normal'
+                    className='p-3 text-sm font-normal border border-whisper'
                     key={col.key}
                   >
                     <span className='flex items-center gap-3'>
@@ -179,50 +181,47 @@ export default function Table({ tableData }: { tableData: TableData }) {
                       />
                     </td>
                   )}
-                  {tableData.columns.map((col) => (
-                    <td className='px-6 py-4' key={col.key}>
-                      {(() => {
-                        if (col.component === 'link') {
-                          return (
-                            <a
-                              className='cursor-pointer hover:text-purple-600'
-                              href={col?.componentOptions?.href}
-                            >
-                              {col.format
-                                ? formatters[col.format](
-                                    String(getNestedField(row, col.key))
-                                  )
-                                : String(getNestedField(row, col.key))}
-                            </a>
-                          );
-                        } else if (col.component === 'set') {
-                          return <SetEntity row={row} column={col} />;
-                        } else if (
-                          col.component === 'image' &&
-                          String(getNestedField(row, col.key))
-                        ) {
-                          return (
-                            <Image
-                              src={
-                                col.componentOptions?.src ||
-                                String(getNestedField(row, col.key)) ||
-                                ''
-                              }
-                              width={col.componentOptions?.size?.width || 64}
-                              height={col.componentOptions?.size?.height || 64}
-                              alt={col.componentOptions?.alt || ''}
-                            />
-                          );
-                        } else {
-                          return col?.format
-                            ? formatters[col.format](
-                                String(getNestedField(row, col.key))
-                              )
-                            : String(getNestedField(row, col.key));
-                        }
-                      })()}
-                    </td>
-                  ))}
+                  {tableData.columns.map((col) => {
+                    const value = String(getNestedField(row, col.key)) || '-';
+                    return (
+                      <td
+                        className='border border-neutral-whisper p-3'
+                        key={col.key}
+                      >
+                        {(() => {
+                          if (col.component === 'link') {
+                            return (
+                              <a
+                                className='cursor-pointer hover:text-purple-600'
+                                href={col?.componentOptions?.href}
+                              >
+                                {col.format
+                                  ? formatters[col.format](value)
+                                  : value}
+                              </a>
+                            );
+                          } else if (col.component === 'set') {
+                            return <SetEntity row={row} column={col} />;
+                          } else if (col.component === 'image') {
+                            return (
+                              <Image
+                                src={col.componentOptions?.src || value || ''}
+                                width={col.componentOptions?.size?.width || 128}
+                                height={
+                                  col.componentOptions?.size?.height || 128
+                                }
+                                alt={col.componentOptions?.alt || ''}
+                              />
+                            );
+                          } else {
+                            return col?.format
+                              ? formatters[col.format](value)
+                              : value;
+                          }
+                        })()}
+                      </td>
+                    );
+                  })}
                   {/* TODO: row actions */}
                 </tr>
               ))}

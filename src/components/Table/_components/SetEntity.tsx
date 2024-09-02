@@ -10,17 +10,17 @@ export default function SetEntity({
 }) {
   const set = row[column.key] as PokemonSet;
   return (
-    <div className='flex gap-5 items-center'>
+    <td className='w-20 h-20'>
       <Image
         src={set.images?.logo || set.images?.symbol || ''}
         width={64}
         height={64}
         alt={set.name || ''}
       />
-      <div className='flex flex-col gap-2 justify-between'>
+      {/* <div className='flex-col gap-2 justify-between hidden md:flex text-sm'>
         <p className='font-medium'>{set.name}</p>
         <p>{set.series}</p>
-      </div>
-    </div>
+      </div> */}
+    </td>
   );
 }

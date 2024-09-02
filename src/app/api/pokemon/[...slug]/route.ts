@@ -16,6 +16,7 @@ export async function GET(
         'Content-Type': 'application/json',
       },
     });
+    console.log('fetching data');
 
     const data = await res.json();
 

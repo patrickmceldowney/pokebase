@@ -3,7 +3,7 @@ import { TableData } from '@/types/table';
 
 async function getData() {
   const res = await fetch(`${process.env.APP_URL}/api/pokemon/cards?limit=10`, {
-    cache: 'no-store',
+    cache: 'reload',
   });
   if (!res.ok) {
     throw new Error('Failed to fetch data');
@@ -17,18 +17,6 @@ export default async function Home() {
 
   let tableData: TableData = {
     columns: [
-      {
-        title: 'Set',
-        key: 'set',
-        component: 'set',
-        sortable: true,
-        sortField: 'set.name',
-      },
-      {
-        title: 'Name',
-        key: 'name',
-        sortable: true,
-      },
       // TODO: create pokemon entity
       {
         title: 'Pokemon',
@@ -40,6 +28,18 @@ export default async function Home() {
             width: 100,
           },
         },
+      },
+      {
+        title: 'Name',
+        key: 'name',
+        sortable: true,
+      },
+      {
+        title: 'Set',
+        key: 'set',
+        component: 'set',
+        sortable: true,
+        sortField: 'set.name',
       },
       {
         title: 'Type',
@@ -78,9 +78,15 @@ export default async function Home() {
       },
     ],
     rows: data.data || [],
+    filters: [
+      {
+        type: 'dropdown',
+        filterKey: 'set',
+      },
+    ],
   };
   return (
-    <main className=' max-h-screen p-24 overflow-hidden flex flex-col'>
+    <main className=' max-h-screen p-24 overflow-hidden flex flex-col bg-white'>
       <Table tableData={tableData} />
     </main>
   );
