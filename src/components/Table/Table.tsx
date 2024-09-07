@@ -12,6 +12,7 @@ import EmptyState from '../EmptyState';
 import { formatters } from './utils/formatters';
 import SetEntity from './_components/SetEntity';
 import Image from 'next/image';
+import Footer from '../Footer';
 
 export default function Table({ tableData }: { tableData: TableData }) {
   const MAX_PAGES_TO_SHOW = 4;
@@ -96,142 +97,194 @@ export default function Table({ tableData }: { tableData: TableData }) {
   }
 
   return (
-    <div
-      className='flex-grow overflow-y-auto'
-      style={{ maxHeight: 'calc(100vh - 40px)' }}
-    >
-      {/* handle filters */}
-      {(tableData?.filters?.length || tableData?.options?.search) && (
-        <div className='flex justify-between sticky top-0 bg-neutral-whisper z-10 rounded-t'>
-          {tableData?.options?.search && <p>Search</p>}
-          {/* TODO: filters */}
-          {(() => {
-            return 'filters';
-          })()}
-        </div>
-      )}
-      {rowResults.length > 0 ? (
-        <div className='overflow-y-auto'>
-          <table className='table-auto w-full text-base text-left text-gray-950 border-collapse'>
-            <thead className='text-sm text-neutral-grey bg-white'>
-              <tr>
-                {/* TODO: handle bulk select on change */}
-                {tableData?.options?.bulkSelect && (
-                  <th className='checkbox-wrapper px-6 py-4'>
-                    <input
-                      type='checkbox'
-                      className='checkbox'
-                      checked={bulkSelect}
-                    />
-                  </th>
-                )}
-
-                {tableData.columns.map((col) => (
-                  <th
-                    scope='col'
-                    className='p-3 text-sm font-normal border border-whisper'
-                    key={col.key}
-                  >
-                    <span className='flex items-center gap-3'>
-                      {col.title}
-                      {col?.sortable && (
-                        <button
-                          className='w-4 h-4 cursor-pointer outline-none border-none text-neutral-grey text-[13px] flex items-center-justify-center'
-                          onClick={() => {
-                            const colKey = getSortFieldKey(col);
-                            if (sortBy.col === colKey) {
-                              setSortBy((prev) => {
-                                return { ...prev, asc: !prev.asc };
-                              });
-                            } else {
-                              setSortBy({
-                                col: colKey,
-                                asc: true,
-                              });
-                            }
-                          }}
-                        >
-                          <i className='fa-solid fa-sort'></i>
-                        </button>
-                      )}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedRows.map((row, i) => (
-                <tr
-                  key={i}
-                  className={`relative ${
-                    i % 2 !== 0 ? 'bg-white' : 'bg-[#f7f7f8b2]'
-                  }`}
-                >
-                  {/* TODO: handle bulk select (bind group) */}
+    <>
+      <div className='flex-grow overflow-auto scrollbar-thin'>
+        {/* handle filters */}
+        {(tableData?.filters?.length || tableData?.options?.search) && (
+          <div className='flex justify-between sticky top-0 bg-neutral-whisper z-10'>
+            {tableData?.options?.search && <p>Search</p>}
+            {/* TODO: filters */}
+            {(() => {
+              return 'filters';
+            })()}
+          </div>
+        )}
+        {rowResults.length > 0 ? (
+          <div className='overflow-y-auto scrollbar-thin'>
+            <table className='table-auto w-full text-base text-left text-gray-950 border-collapse scrollbar-thin'>
+              <thead className='text-sm text-neutral-grey bg-white'>
+                <tr>
+                  {/* TODO: handle bulk select on change */}
                   {tableData?.options?.bulkSelect && (
-                    <td className='checkbox-wrapper px-6 py-4'>
+                    <th className='checkbox-wrapper px-6 py-4'>
                       <input
                         type='checkbox'
                         className='checkbox'
-                        name='selectRow'
-                        id='selectRow'
-                        value={String(
-                          row[tableData.options.bulkSelectKey || '_id']
-                        )}
+                        checked={bulkSelect}
                       />
-                    </td>
+                    </th>
                   )}
-                  {tableData.columns.map((col) => {
-                    const value = String(getNestedField(row, col.key)) || '-';
-                    return (
-                      <td
-                        className='border border-neutral-whisper p-3'
-                        key={col.key}
-                      >
-                        {(() => {
-                          if (col.component === 'link') {
-                            return (
-                              <a
-                                className='cursor-pointer hover:text-purple-600'
-                                href={col?.componentOptions?.href}
-                              >
-                                {col.format
-                                  ? formatters[col.format](value)
-                                  : value}
-                              </a>
-                            );
-                          } else if (col.component === 'set') {
-                            return <SetEntity row={row} column={col} />;
-                          } else if (col.component === 'image') {
-                            return (
-                              <Image
-                                src={col.componentOptions?.src || value || ''}
-                                width={col.componentOptions?.size?.width || 128}
-                                height={
-                                  col.componentOptions?.size?.height || 128
-                                }
-                                alt={col.componentOptions?.alt || ''}
-                              />
-                            );
-                          } else {
-                            return col?.format
-                              ? formatters[col.format](value)
-                              : value;
-                          }
-                        })()}
-                      </td>
-                    );
-                  })}
-                  {/* TODO: row actions */}
+
+                  {tableData.columns.map((col) => (
+                    <th
+                      scope='col'
+                      className='p-3 text-sm font-normal border border-whisper'
+                      key={col.key}
+                    >
+                      <span className='flex items-center gap-3'>
+                        {col.title}
+                        {col?.sortable && (
+                          <button
+                            className='w-4 h-4 cursor-pointer outline-none border-none text-neutral-grey text-[13px] flex items-center-justify-center'
+                            onClick={() => {
+                              const colKey = getSortFieldKey(col);
+                              if (sortBy.col === colKey) {
+                                setSortBy((prev) => {
+                                  return { ...prev, asc: !prev.asc };
+                                });
+                              } else {
+                                setSortBy({
+                                  col: colKey,
+                                  asc: true,
+                                });
+                              }
+                            }}
+                          >
+                            <i className='fa-solid fa-sort'></i>
+                          </button>
+                        )}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
+              </thead>
+              <tbody>
+                {paginatedRows.map((row, i) => (
+                  <tr
+                    key={i}
+                    className={`relative ${
+                      i % 2 !== 0 ? 'bg-white' : 'bg-[#f7f7f8b2]'
+                    }`}
+                  >
+                    {/* TODO: handle bulk select (bind group) */}
+                    {tableData?.options?.bulkSelect && (
+                      <td className='checkbox-wrapper px-6 py-4'>
+                        <input
+                          type='checkbox'
+                          className='checkbox'
+                          name='selectRow'
+                          id='selectRow'
+                          value={String(
+                            row[tableData.options.bulkSelectKey || '_id']
+                          )}
+                        />
+                      </td>
+                    )}
+                    {tableData.columns.map((col) => {
+                      const value = String(getNestedField(row, col.key)) || '-';
+                      return (
+                        <td
+                          className='border border-neutral-whisper p-3'
+                          key={col.key}
+                        >
+                          {(() => {
+                            if (col.component === 'link') {
+                              return (
+                                <a
+                                  className='cursor-pointer hover:text-purple-600'
+                                  href={col?.componentOptions?.href}
+                                >
+                                  {col.format
+                                    ? formatters[col.format](value)
+                                    : value}
+                                </a>
+                              );
+                            } else if (col.component === 'set') {
+                              return <SetEntity row={row} column={col} />;
+                            } else if (col.component === 'image') {
+                              return (
+                                <Image
+                                  src={col.componentOptions?.src || value || ''}
+                                  width={
+                                    col.componentOptions?.size?.width || 128
+                                  }
+                                  height={
+                                    col.componentOptions?.size?.height || 128
+                                  }
+                                  alt={col.componentOptions?.alt || ''}
+                                />
+                              );
+                            } else {
+                              return col?.format
+                                ? formatters[col.format](value)
+                                : value;
+                            }
+                          })()}
+                        </td>
+                      );
+                    })}
+                    {/* TODO: row actions */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyState
+            title='No data found...'
+            subtitle="We couldn't find any pokemon matching your search criteria. Please clear your search and try again"
+            icon='fa-regular fa-magnifying-glass'
+          />
+        )}
+      </div>
+      {tableData?.options?.pagination && (
+        <Footer>
+          <p className='flex-1'>
+            Results
+            {paginationStart}-{paginationEnd} of {(rowResults || []).length}
+          </p>
+          <div className='flex items-center gap-6'>
+            <button
+              type='button'
+              className='btn-icon-simple'
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              <i className='fa-solid fa-chevron-left'></i>
+            </button>
+            <div className='flex items-center gap-0.5'>
+              {pageNumbers.map((pageNumber) => (
+                <>
+                  {pageNumber === -1 ? (
+                    <span className='text-neutral-grey'>...</span>
+                  ) : (
+                    <button
+                      className={`page-number ${
+                        currentPage === pageNumber ? 'selected' : ''
+                      }`}
+                      type='button'
+                      onClick={() => setCurrentPage(pageNumber)}
+                    >
+                      {pageNumber}
+                    </button>
+                  )}
+                </>
               ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <EmptyState />
+            </div>
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className='btn-icon-simple'
+              type='button'
+              disabled={currentPage === totalPages}
+            >
+              <i className='fa-solid fa-chevron-right'></i>
+            </button>
+          </div>
+          <div className='flex-1 flex items-center justify-end gap-2.5'>
+            <p className='text-neutral-grey'>Rows per page</p>
+          </div>
+        </Footer>
       )}
-    </div>
-    // TODO: pagination
+    </>
   );
 }

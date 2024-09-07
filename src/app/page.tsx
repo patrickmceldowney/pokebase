@@ -84,9 +84,12 @@ export default async function Home() {
         filterKey: 'set',
       },
     ],
+    options: {
+      pagination: false,
+    },
   };
   return (
-    <main className=' max-h-screen p-24 overflow-hidden flex flex-col bg-white'>
+    <main className='max-h-screen p-10 overflow-hidden flex flex-col bg-white'>
       <Table tableData={tableData} />
     </main>
   );
