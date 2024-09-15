@@ -1,6 +1,5 @@
 import Table from '@/components/Table/Table';
 import { TableData } from '@/types/table';
-import { useEffect, useState } from 'react';
 
 async function getData(page: number, perPage: number) {
   const res = await fetch(
