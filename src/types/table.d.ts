@@ -3,6 +3,7 @@ export interface TableData {
   rows: Row[];
   filters?: TableFilter[];
   options?: TableOptions;
+  totalItems: number;
 }
 
 export interface Column {

@@ -10,7 +10,8 @@ export async function GET(
     const searchParams = req.nextUrl.searchParams;
     // limit
     const limit = searchParams.get('limit') || 10;
-    const res = await fetch(`${url}/${path}?pageSize=${limit}`, {
+    const page = searchParams.get('page') || 1;
+    const res = await fetch(`${url}/${path}?pageSize=${limit}&page=${page}`, {
       headers: {
         'X-Api-Key': process.env.API_KEY!,
         'Content-Type': 'application/json',

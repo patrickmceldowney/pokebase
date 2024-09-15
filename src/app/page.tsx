@@ -1,10 +1,14 @@
 import Table from '@/components/Table/Table';
 import { TableData } from '@/types/table';
+import { useEffect, useState } from 'react';
 
-async function getData() {
-  const res = await fetch(`${process.env.APP_URL}/api/pokemon/cards?limit=10`, {
-    cache: 'reload',
-  });
+async function getData(page: number, perPage: number) {
+  const res = await fetch(
+    `${process.env.APP_URL}/api/pokemon/cards?limit=${perPage}&page=${page}`,
+    {
+      cache: 'reload',
+    }
+  );
   if (!res.ok) {
     throw new Error('Failed to fetch data');
   }
@@ -13,7 +17,9 @@ async function getData() {
 }
 
 export default async function Home() {
-  const data = await getData();
+  let data = await getData(1, 10);
+  let totalCount = data.totalCount;
+  console.log('data', data);
 
   let tableData: TableData = {
     columns: [
@@ -85,9 +91,11 @@ export default async function Home() {
       },
     ],
     options: {
-      pagination: false,
+      pagination: true,
     },
+    totalItems: totalCount,
   };
+
   return (
     <main className='max-h-screen p-10 overflow-hidden flex flex-col bg-white'>
       <Table tableData={tableData} />

@@ -46,44 +46,29 @@ export default function Table({ tableData }: { tableData: TableData }) {
     setRowResults(sortedRows);
   }, [searchValue, filteredTableRows, sortBy, tableData.options]);
 
-  // get paginated results
-  useEffect(() => {
-    if (!tableData?.options?.pagination || !rowsPerPage) {
-      setPaginatedRows(rowResults);
-    } else {
-      const cloned = deepClone(rowResults);
-      const startIdx = (currentPage - 1) * rowsPerPage;
-      const endIdx = Math.min(
-        startIdx * rowsPerPage,
-        (rowResults || []).length
-      );
-      setPaginatedRows(cloned.slice(startIdx, endIdx));
-    }
-  }, [rowResults, currentPage, rowsPerPage, tableData?.options?.pagination]);
-
   // set total pages
   useEffect(() => {
     setTotalPages(
-      rowsPerPage ? Math.ceil((rowResults || []).length / rowsPerPage) : 1
+      rowsPerPage ? Math.ceil(tableData.totalItems / rowsPerPage) : 1
     );
-  }, [rowsPerPage, rowResults]);
+  }, [rowsPerPage, tableData.totalItems]);
 
   // reset current page
-  useEffect(() => {
-    if (totalPages < 2) {
-      setCurrentPage(1);
-    }
-  }, [totalPages]);
+  // useEffect(() => {
+  //   if (totalPages < 2) {
+  //     setCurrentPage(1);
+  //   }
+  // }, [totalPages]);
 
   // set pagination
   useEffect(() => {
     setPaginationStart((currentPage - 1) * rowsPerPage + 1);
     setPaginationEnd(
       rowsPerPage
-        ? Math.min(currentPage * rowsPerPage, (rowResults || []).length)
-        : rowResults.length
+        ? Math.min(currentPage * rowsPerPage, tableData.totalItems)
+        : tableData.totalItems
     );
-  }, [currentPage, rowsPerPage, rowResults]);
+  }, [currentPage, rowsPerPage, tableData.totalItems]);
 
   // generate page numbers
   useEffect(() => {
@@ -94,6 +79,20 @@ export default function Table({ tableData }: { tableData: TableData }) {
 
   function getSortFieldKey(column: Column) {
     return column.sortField ?? column.key;
+  }
+
+  async function getData() {
+    try {
+      console.log(currentPage);
+      const res = await fetch(
+        `/api/pokemon/cards?limit=${rowsPerPage}&page=${currentPage}`
+      );
+      const { data } = await res.json();
+      console.log('data', data);
+      setFilteredTableRows(data);
+    } catch (e) {
+      console.error('Error getting table data', e);
+    }
   }
 
   return (
@@ -159,7 +158,7 @@ export default function Table({ tableData }: { tableData: TableData }) {
                 </tr>
               </thead>
               <tbody>
-                {paginatedRows.map((row, i) => (
+                {rowResults.map((row, i) => (
                   <tr
                     key={i}
                     className={`relative ${
@@ -241,14 +240,17 @@ export default function Table({ tableData }: { tableData: TableData }) {
         <Footer>
           <p className='flex-1'>
             Results
-            {paginationStart}-{paginationEnd} of {(rowResults || []).length}
+            {paginationStart}-{paginationEnd} of {tableData.totalItems}
           </p>
           <div className='flex items-center gap-6'>
             <button
               type='button'
               className='btn-icon-simple'
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
+              onClick={() => {
+                setCurrentPage(currentPage - 1);
+                getData();
+              }}
             >
               <i className='fa-solid fa-chevron-left'></i>
             </button>
@@ -263,7 +265,10 @@ export default function Table({ tableData }: { tableData: TableData }) {
                         currentPage === pageNumber ? 'selected' : ''
                       }`}
                       type='button'
-                      onClick={() => setCurrentPage(pageNumber)}
+                      onClick={() => {
+                        setCurrentPage(pageNumber);
+                        getData();
+                      }}
                     >
                       {pageNumber}
                     </button>
@@ -272,7 +277,10 @@ export default function Table({ tableData }: { tableData: TableData }) {
               ))}
             </div>
             <button
-              onClick={() => setCurrentPage(currentPage + 1)}
+              onClick={() => {
+                setCurrentPage(currentPage + 1);
+                getData();
+              }}
               className='btn-icon-simple'
               type='button'
               disabled={currentPage === totalPages}
